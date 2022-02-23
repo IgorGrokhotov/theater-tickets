@@ -5,56 +5,49 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
+import ru.grokhotov.springboot.theatertickets.models.Perfomance;
+import ru.grokhotov.springboot.theatertickets.models.Ticket;
 
 import java.util.HashMap;
 import java.util.Map;
 
 @Component
 @Scope("prototype")
-public class Perfomance implements ApplicationContextAware {
-    private String name;
-    private String describe;
-    private String date;
-    private String age;
+public class PerfomanceService implements ApplicationContextAware {
+    private Perfomance perfomance;
     private Map<Integer, Ticket> freeTickets = new HashMap<>();
     private Map<Integer, Ticket> soldTickets = new HashMap<>();
     private Map<Integer, Ticket> backTickets = new HashMap<>();
     private ApplicationContext ctx;
 
-    public Perfomance() {
+    public PerfomanceService() {
     }
 
     public void setPerfomance(String name, String describe, String date, String age, int places) {
-        this.name = name;
-        this.describe = describe;
-        this.date = date;
-        this.age = age;
+        perfomance = new Perfomance(name, describe, date, age);
         for (int i = 0; i < places; i++) {
             int place = i + 1;
-            Ticket ticket = new Ticket(place);
+            Ticket ticket = new Ticket(perfomance, place);
             freeTickets.put(place, ticket);
         }
     }
 
-    public String getName() {
-        return name;
-    }
-
-    public String getDescribe() {
-        return describe;
-    }
-
-    public String getDate() {
-        return date;
-    }
-
-    public String getAge() {
-        return age;
+    public Perfomance transferPerfomance(String date) {
+        perfomance.setDate(date);
+        return perfomance;
     }
 
     public int getSoldTicketsCount() {
         return soldTickets.size();
     }
+
+//    public int getFreeTicketsCount() {
+//        return freeTickets.size();
+//    }
+
+//    public int getBackTicketsCount() {
+//        return backTickets.size();
+//    }
 
     public Ticket saleTicket(Integer place) {
         if (!freeTickets.isEmpty()) {
@@ -71,13 +64,17 @@ public class Perfomance implements ApplicationContextAware {
         soldTickets.remove((Integer) ticket.getPlace());
     }
 
-    public String getPerfomance() {
-        return  getName() + ", " + getDescribe() +
-                ", дата: " + getDate() +
-                ", возрастное ограниечение: " + getAge() +
+    public void print() {
+        System.out.println(perfomance.getName() + ", " + perfomance.getDescribe() +
+                ", дата: " + perfomance.getDate() +
+                ", возрастное ограниечение: " + perfomance.getAge() +
                 ", продано билетов: " + Integer.toString(soldTickets.size()) +
                 ", доступно к продаже: " + Integer.toString(freeTickets.size()) +
-                ", возвращено билетов: " + Integer.toString(backTickets.size());
+                ", возвращено билетов: " + Integer.toString(backTickets.size()));
+    }
+
+    public Perfomance getPerfomance() {
+        return perfomance;
     }
 
     public Map<Integer, Ticket> getFreeTickets() {
