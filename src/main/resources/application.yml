@@ -1,0 +1,12 @@
+spring:
+  datasource:
+    url: 'jdbc:postgresql://localhost:5432/LearnUp'
+    username: 'postgres'
+    password: 'Pa$$w0rd'
+    driver-class-name: 'org.postgresql.Driver'
+  jpa:
+    properties:
+      hibernate:
+#        show_sql: true
+#        format_sql: true
+#        use_sql_comments: true
